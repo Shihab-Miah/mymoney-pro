@@ -4,53 +4,59 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Button
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
+import androidx.compose.material3.Surface
+import androidx.compose.runtime.*
+import com.miahshihab.mymoney.ui.screens.DashboardScreen
+import com.miahshihab.mymoney.ui.screens.LoansScreen
+import com.miahshihab.mymoney.ui.screens.SettingsScreen
+import com.miahshihab.mymoney.ui.theme.AppThemeColors
+import com.miahshihab.mymoney.ui.theme.ThemePresets
+
+enum class AppNavScreen {
+    DASHBOARD, LOANS, SETTINGS
+}
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
+
         setContent {
-            MaterialTheme {
-                Scaffold(modifier = Modifier.fillMaxSize()) { padding ->
-                    Greeting("Android", Modifier.padding(padding))
+            val systemDark = isSystemInDarkTheme()
+            var currentTheme by remember { mutableStateOf<AppThemeColors>(ThemePresets.Emerald) }
+            var isDarkMode by remember { mutableStateOf(systemDark) }
+            var isAmoled by remember { mutableStateOf(false) }
+            var currentScreen by remember { mutableStateOf(AppNavScreen.DASHBOARD) }
+
+            val colorScheme = if (isDarkMode) {
+                ThemePresets.createDarkColorScheme(currentTheme, isAmoled)
+            } else {
+                ThemePresets.createLightColorScheme(currentTheme)
+            }
+
+            MaterialTheme(colorScheme = colorScheme) {
+                Surface {
+                    when (currentScreen) {
+                        AppNavScreen.DASHBOARD -> DashboardScreen(
+                            onNavigateToLoans = { currentScreen = AppNavScreen.LOANS },
+                            onNavigateToSettings = { currentScreen = AppNavScreen.SETTINGS }
+                        )
+                        AppNavScreen.LOANS -> LoansScreen(
+                            onNavigateBack = { currentScreen = AppNavScreen.DASHBOARD }
+                        )
+                        AppNavScreen.SETTINGS -> SettingsScreen(
+                            currentTheme = currentTheme,
+                            onThemeSelected = { currentTheme = it },
+                            isDarkMode = isDarkMode,
+                            onDarkModeToggled = { isDarkMode = it },
+                            isAmoled = isAmoled,
+                            onAmoledToggled = { isAmoled = it }
+                        )
+                    }
                 }
             }
         }
     }
-}
-
-@Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-    var taps by rememberSaveable { mutableIntStateOf(0) }
-    Column(
-        modifier = modifier.fillMaxSize(),
-        verticalArrangement = Arrangement.spacedBy(16.dp, Alignment.CenterVertically),
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        Text("Hello $name!", style = MaterialTheme.typography.headlineMedium)
-        Button(onClick = { taps++ }) { Text("Tapped $taps times") }
-    }
-}
-
-@Preview(showBackground = true)
-@Composable
-fun GreetingPreview() {
-    MaterialTheme { Greeting("Android") }
 }
