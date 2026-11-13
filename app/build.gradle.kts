@@ -15,11 +15,19 @@ android {
         versionName = "1.0"
     }
 
+    signingConfigs {
+        create("release") {
+            storeFile = file("../mymoney-release.jks")
+            storePassword = "mymoney2026"
+            keyAlias = "mymoney"
+            keyPassword = "mymoney2026"
+        }
+    }
+
     buildTypes {
         release {
             isMinifyEnabled = false
-            // Signed with the debug key so the release APK installs too; use your own key to publish
-            signingConfig = signingConfigs.getByName("debug")
+            signingConfig = signingConfigs.getByName("release")
         }
     }
     compileOptions {
