@@ -62,6 +62,11 @@ fun LoansScreen(
         topBar = {
             TopAppBar(
                 title = { Text("Loans & Debts", fontWeight = FontWeight.Bold) },
+                navigationIcon = {
+                    TextButton(onClick = onNavigateBack) {
+                        Text("← Back")
+                    }
+                },
                 colors = TopAppBarDefaults.topAppBarColors(
                     containerColor = MaterialTheme.colorScheme.primaryContainer,
                     titleContentColor = MaterialTheme.colorScheme.onPrimaryContainer

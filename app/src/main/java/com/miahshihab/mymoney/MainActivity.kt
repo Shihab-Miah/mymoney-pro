@@ -52,7 +52,8 @@ class MainActivity : ComponentActivity() {
                             isDarkMode = isDarkMode,
                             onDarkModeToggled = { isDarkMode = it },
                             isAmoled = isAmoled,
-                            onAmoledToggled = { isAmoled = it }
+                            onAmoledToggled = { isAmoled = it },
+                            onNavigateBack = { currentScreen = AppNavScreen.DASHBOARD }
                         )
                     }
                 }

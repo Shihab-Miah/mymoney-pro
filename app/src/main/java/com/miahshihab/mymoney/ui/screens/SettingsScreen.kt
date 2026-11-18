@@ -32,7 +32,8 @@ fun SettingsScreen(
     isDarkMode: Boolean,
     onDarkModeToggled: (Boolean) -> Unit,
     isAmoled: Boolean,
-    onAmoledToggled: (Boolean) -> Unit
+    onAmoledToggled: (Boolean) -> Unit,
+    onNavigateBack: () -> Unit = {}
 ) {
     val context = LocalContext.current
     val driveManager = remember { GoogleDriveBackupManager(context) }
@@ -43,6 +44,11 @@ fun SettingsScreen(
         topBar = {
             TopAppBar(
                 title = { Text("Settings & Themes", fontWeight = FontWeight.Bold) },
+                navigationIcon = {
+                    TextButton(onClick = onNavigateBack) {
+                        Text("← Back")
+                    }
+                },
                 colors = TopAppBarDefaults.topAppBarColors(
                     containerColor = MaterialTheme.colorScheme.primaryContainer,
                     titleContentColor = MaterialTheme.colorScheme.onPrimaryContainer
